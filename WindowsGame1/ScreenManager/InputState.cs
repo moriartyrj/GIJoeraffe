@@ -22,6 +22,8 @@ namespace Xbox360Game1
 
         public readonly KeyboardState[] CurrentKeyboardStates;
         public readonly KeyboardState[] LastKeyboardStates;
+        public readonly GamePadState[] CurrentGamePadStates;
+        public readonly GamePadState[] LastGamePadStates;
 
         /// <summary>
         /// Constructs a new input state.
@@ -30,6 +32,8 @@ namespace Xbox360Game1
         {
             CurrentKeyboardStates = new KeyboardState[MaxInputs];
             LastKeyboardStates = new KeyboardState[MaxInputs];
+            CurrentGamePadStates = new GamePadState[MaxInputs];
+            LastGamePadStates = new GamePadState[MaxInputs];
         }
 
         /// <summary>
@@ -40,7 +44,7 @@ namespace Xbox360Game1
         {
             get
             {
-                return IsNewButtonPress(Keys.Up);
+                return IsNewButtonPress(Keys.Up) || IsNewButtonPress(Buttons.DPadUp);
             }
         }
 
@@ -52,7 +56,7 @@ namespace Xbox360Game1
         {
             get
             {
-                return IsNewButtonPress(Keys.Down);
+                return IsNewButtonPress(Keys.Down) || IsNewButtonPress(Buttons.DPadDown);
             }
         }
 
@@ -64,7 +68,7 @@ namespace Xbox360Game1
         {
             get
             {
-                return IsNewButtonPress(Keys.Enter);
+                return IsNewButtonPress(Keys.Enter) || IsNewButtonPress(Buttons.A);
             }
         }
 
@@ -76,7 +80,7 @@ namespace Xbox360Game1
         {
             get
             {
-                return IsNewButtonPress(Keys.Back);
+                return IsNewButtonPress(Keys.Back) || IsNewButtonPress(Buttons.Back);;
             }
         }
 
@@ -87,8 +91,8 @@ namespace Xbox360Game1
         public bool PauseGame
         {
             get
-            {
-                return IsNewButtonPress(Keys.Escape);
+            {  
+                return IsNewButtonPress(Buttons.Back) || IsNewButtonPress(Keys.Escape);
             }
         }
 
@@ -101,8 +105,32 @@ namespace Xbox360Game1
             {
                 LastKeyboardStates[i] = CurrentKeyboardStates[i];
                 CurrentKeyboardStates[i] = Keyboard.GetState();
+
+                LastGamePadStates[i] = CurrentGamePadStates[i];
+                CurrentGamePadStates[i] = GamePad.GetState((PlayerIndex)i, GamePadDeadZone.IndependentAxes);
             }
         }
+
+        /// <summary>
+        /// Checks for a "menu select" input action from the specified player.
+        /// </summary>
+        public bool IsMenuSelect(PlayerIndex playerIndex)
+        {
+            return IsNewButtonPress(Buttons.A, playerIndex) || IsNewButtonPress(Buttons.Start, playerIndex) || IsNewButtonPress(Keys.Enter, playerIndex);
+        }
+
+        /// <summary>
+        /// Checks for a "menu cancel" input action from the specified player.
+        /// </summary>
+        public bool IsMenuCancel(PlayerIndex playerIndex)
+        {
+            return IsNewButtonPress(Buttons.B, playerIndex) || IsNewButtonPress(Buttons.Back, playerIndex) || IsNewButtonPress(Keys.Back, playerIndex);
+        }
+
+
+
+
+        // KEYBOARD FUNCTIONS
 
         /// <summary>
         /// Helper for checking if a button was newly pressed during this update,
@@ -129,20 +157,37 @@ namespace Xbox360Game1
                     LastKeyboardStates[(int)playerIndex].IsKeyUp(key));
         }
 
+       
+
+
+
+
+        // GAMEPAD FUNCTIONS
+        
         /// <summary>
-        /// Checks for a "menu select" input action from the specified player.
+        /// Helper for checking if a button was newly pressed during this update,
+        /// by any player.
         /// </summary>
-        public bool IsMenuSelect(PlayerIndex playerIndex)
+        public bool IsNewButtonPress(Buttons button)
         {
-            return IsNewButtonPress(Keys.Enter, playerIndex);
+            for (int i = 0; i < MaxInputs; i++)
+            {
+                if (IsNewButtonPress(button, (PlayerIndex)i))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Checks for a "menu cancel" input action from the specified player.
+        /// Helper for checking if a button was newly pressed during this update,
+        /// by the specified player.
         /// </summary>
-        public bool IsMenuCancel(PlayerIndex playerIndex)
+        public bool IsNewButtonPress(Buttons button, PlayerIndex playerIndex)
         {
-            return IsNewButtonPress(Keys.Back, playerIndex);
+            return (CurrentGamePadStates[(int)playerIndex].IsButtonDown(button) &&
+                    LastGamePadStates[(int)playerIndex].IsButtonUp(button));
         }
+
     }
 }

@@ -451,7 +451,7 @@ namespace Xbox360Game1
             {
                 // This section handles tank movement.  We only allow one "movement" action
                 // to occur at once so that touchpad devices don't get double hits.
-                if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Left))
+                if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Left) || input.CurrentGamePadStates[0].DPad.Left == ButtonState.Pressed)
                 {
                     if (player.ducking)
                         player.Velocity.X = -0.3f;
@@ -459,7 +459,7 @@ namespace Xbox360Game1
                         player.Velocity.X = -1.0f;
                     player.FacingLeft = true;
                 }
-                else if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Right))
+                else if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Right) || input.CurrentGamePadStates[0].DPad.Right == ButtonState.Pressed)
                 {
                     if (player.ducking)
                         player.Velocity.X = 0.3f;
@@ -475,12 +475,13 @@ namespace Xbox360Game1
                 }
 
 
-                if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Down) && !player.Jumping && !player.Falling)
+                if ((input.CurrentKeyboardStates[0].IsKeyDown(Keys.Down) || input.CurrentGamePadStates[0].DPad.Down == ButtonState.Pressed)
+                        && !player.Jumping && !player.Falling)
                 {
                     player.LookingUp = false;
                     player.ducking = true;
                 }
-                else if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Up))
+                else if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Up) || input.CurrentGamePadStates[0].DPad.Up == ButtonState.Pressed)
                 {
                     player.LookingUp = true;
                     player.ducking = false;
@@ -492,7 +493,7 @@ namespace Xbox360Game1
                 }
 
                 // B button, or pressing on the upper half of the pad fires the weapon.
-                if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.LeftControl))
+                if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.LeftControl) || input.CurrentGamePadStates[0].IsButtonDown(Buttons.A))
                 {
                     //if (player.FireTimer <= 0.0f && player.IsAlive && !gameOver)
                     if (!player.pulledTrigger && player.IsAlive && !gameOver)
@@ -543,7 +544,8 @@ namespace Xbox360Game1
                     player.pulledTrigger = false;
                 }
 
-                if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.LeftAlt) && !player.Falling && !player.ducking)
+                if ((input.CurrentKeyboardStates[0].IsKeyDown(Keys.LeftAlt) || input.CurrentGamePadStates[0].IsButtonDown(Buttons.B))
+                        && !player.Falling && !player.ducking)
                     player.Jumping = true;
             }
         }
@@ -1175,8 +1177,8 @@ namespace Xbox360Game1
             ScreenManager.Game.GraphicsDevice.Clear(clear);
 
             // Draw the mountains
-            ScreenManager.SpriteBatch.Draw(mountainsTexture, new Vector2(background.Position, worldBounds.Right - mountainsTexture.Height), tint);
-            ScreenManager.SpriteBatch.Draw(mountainsTexture, new Vector2(background2.Position, worldBounds.Right - mountainsTexture.Height), tint);
+            ScreenManager.SpriteBatch.Draw(mountainsTexture, new Vector2(background.Position, worldBounds.Bottom - mountainsTexture.Height - 40), tint);
+            ScreenManager.SpriteBatch.Draw(mountainsTexture, new Vector2(background2.Position, worldBounds.Bottom - mountainsTexture.Height - 40), tint);
 
             // Draw the hills
             ScreenManager.SpriteBatch.Draw(hillsTexture, new Vector2(background.Position, worldBounds.Bottom - hillsTexture.Height), tint);
