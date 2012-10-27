@@ -114,7 +114,7 @@ namespace Xbox360Game1
         {
             random = new Random();
 
-            worldBounds = new Rectangle(0, 0, 480, 360);
+            worldBounds = new Rectangle(0, 0, 800, 600);
 
             player = new Player();
             playerBullets = new List<Bullet>();
@@ -315,9 +315,9 @@ namespace Xbox360Game1
                     player.Position.Y += player.Velocity.Y * elapsed;
                     player.FireTimer -= elapsed;
 
-                    if (player.Position.X <= 0.0f + 150)
+                    if (player.Position.X <= 0.0f + 250)
                     {
-                        player.Position = new Vector2(0.0f + 151, player.Position.Y);
+                        player.Position = new Vector2(0.0f + 251, player.Position.Y);
                         background.Position = background.Position + 1.0f;
                         background2.Position = background2.Position + 1.0f;
                         for (int i = 0; i < playerBullets.Count; ++i)
@@ -355,9 +355,9 @@ namespace Xbox360Game1
                         }
                     }
 
-                    if (player.Position.X + 300 >= worldBounds.Right)
+                    if (player.Position.X + 500 >= worldBounds.Right)
                     {
-                        player.Position = new Vector2(worldBounds.Right - 301, player.Position.Y);
+                        player.Position = new Vector2(worldBounds.Right - 501, player.Position.Y);
                         background.Position = background.Position - 1.0f;
                         background2.Position = background2.Position - 1.0f;
 
@@ -942,7 +942,7 @@ namespace Xbox360Game1
                 newAlien.Velocity.X = -random.Next((int)alienSpeedMin, (int)alienSpeedMax);
             }
 
-            newAlien.Position.Y = 50.0f + 200.0f * (float)random.NextDouble();
+            newAlien.Position.Y = 50.0f + 375.0f * (float)random.NextDouble();
 
             // Aliens
             if (transitionFactor > 0.0f)

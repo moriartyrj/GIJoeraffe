@@ -13,8 +13,10 @@ namespace Xbox360Game1
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 480;
-            graphics.PreferredBackBufferHeight = 360;
+           // graphics.PreferredBackBufferWidth = 480;
+           // graphics.PreferredBackBufferHeight = 360;
+
+
 
             Content.RootDirectory = "Content";
 
