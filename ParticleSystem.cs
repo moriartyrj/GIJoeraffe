@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// A relatively simple particle system.  We recycle particles instead of creating

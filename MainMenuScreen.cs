@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// The main menu screen is the first thing displayed when the game starts up.

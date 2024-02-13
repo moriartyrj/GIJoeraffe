@@ -9,7 +9,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// Helper class represents a single entry in a MenuScreen. By default this

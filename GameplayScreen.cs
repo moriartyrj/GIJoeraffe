@@ -11,13 +11,13 @@ using System.Collections.ObjectModel;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.GamerServices;
+//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
+//using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.Content;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// This component draws the entire background for the game.  It handles
@@ -187,7 +187,7 @@ namespace Xbox360Game1
 
             particles = new ParticleSystem(ScreenManager.Game.Content, ScreenManager.SpriteBatch);
 
-            LoadHighscore();
+            //LoadHighscore();
 
             base.LoadContent();
 
@@ -200,7 +200,7 @@ namespace Xbox360Game1
         /// </summary>
         public override void UnloadContent()
         {
-            SaveHighscore();
+            //SaveHighscore();
 
             particles = null;
 
@@ -210,7 +210,7 @@ namespace Xbox360Game1
         /// <summary>
         /// Saves the current highscore to a text file. The StorageDevice was selected during the loading screen.
         /// </summary>
-        private void SaveHighscore()
+       /* private void SaveHighscore()
         {
             StorageDevice device = (StorageDevice)ScreenManager.Game.Services.GetService(typeof(StorageDevice));
             if (device != null)
@@ -222,12 +222,12 @@ namespace Xbox360Game1
                 writer.Close();
                 container.Dispose();
             }
-        }
+        }*/
 
         /// <summary>
         /// Loads the high score from a text file.  The StorageDevice was selected during the loading screen.
         /// </summary>
-        private void LoadHighscore()
+        /*private void LoadHighscore()
         {
             StorageDevice device = (StorageDevice)ScreenManager.Game.Services.GetService(typeof(StorageDevice));
             if (device != null)
@@ -258,7 +258,7 @@ namespace Xbox360Game1
 
                 container.Dispose();
             }
-        }
+        }*/
 
         #endregion
 
@@ -1188,8 +1188,9 @@ namespace Xbox360Game1
             ScreenManager.SpriteBatch.Draw(groundTexture, new Vector2(background2.Position, worldBounds.Bottom - groundTexture.Height), tint);
 
             // Draw the sun or moon (based on time)
-            ScreenManager.SpriteBatch.Draw(sunTexture, sunPosition, new Color(255, 255, 255, (byte)(255.0f * (1.0f - transitionFactor))));
-            ScreenManager.SpriteBatch.Draw(moonTexture, sunPosition, new Color(255, 255, 255, (byte)(255.0f * transitionFactor)));
+            int colorMax = 255;
+            ScreenManager.SpriteBatch.Draw(sunTexture, sunPosition, new Color(colorMax, colorMax, colorMax, (byte)(255.0f * (1.0f - transitionFactor))));
+            ScreenManager.SpriteBatch.Draw(moonTexture, sunPosition, new Color(colorMax, colorMax, colorMax, (byte)(255.0f * transitionFactor)));
         }
 
         /// <summary>

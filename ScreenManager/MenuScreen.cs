@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// Base class for screens that contain a menu of options. The user can
@@ -47,7 +47,7 @@ namespace Xbox360Game1
 
         public override void LoadContent()
         {
-            pixel = new Texture2D(ScreenManager.Game.GraphicsDevice, 1, 1, 1, TextureUsage.None, SurfaceFormat.Color);
+            pixel = new Texture2D(ScreenManager.Game.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             pixel.SetData<Color>(new Color[] { Color.White });
 
             base.LoadContent();

@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// The screen manager is a component which manages one or more GameScreen
@@ -92,7 +92,7 @@ namespace Xbox360Game1
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = content.Load<SpriteFont>("menufont");
-            blankTexture = new Texture2D(GraphicsDevice, 1, 1, 1, TextureUsage.None, SurfaceFormat.Color);
+            blankTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             blankTexture.SetData<Color>(new Color[] { Color.White });
 
             // Tell each of the screens to load their content.
@@ -249,9 +249,10 @@ namespace Xbox360Game1
 
             spriteBatch.Begin();
 
+            int colorMin = 0;
             spriteBatch.Draw(blankTexture,
                              new Rectangle(0, 0, viewport.Width, viewport.Height),
-                             new Color(0, 0, 0, (byte)alpha));
+                             new Color(colorMin, colorMin, colorMin, (byte)alpha));
 
             spriteBatch.End();
         }

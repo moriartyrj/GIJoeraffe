@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 #endif
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// Primarily for controlling what song is playing.  The UI is a bit clunky at the moment

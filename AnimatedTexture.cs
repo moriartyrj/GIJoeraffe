@@ -1,17 +1,17 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.GamerServices;
+//using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
+//using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.Content;
 
 /// <summary>
 /// From http://community.sgdotnet.org/blogs/zhongqiang/archive/2007/06/29/XNA-AnimatedTexture-Class.aspx
 /// </summary>
 ///
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
 
     public class AnimatedTexture

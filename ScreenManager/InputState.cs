@@ -8,7 +8,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// Helper for reading input from keyboard and gamepad. This class tracks both

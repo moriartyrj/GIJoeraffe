@@ -9,7 +9,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// The background screen sits behind all the other menu screens.
@@ -73,8 +73,10 @@ namespace Xbox360Game1
 
             spriteBatch.Begin();
 
+            int colorMax = 255;
+
             // Background
-            spriteBatch.Draw(background, new Vector2(0,0), new Color(255, 255, 255, TransitionAlpha));
+            spriteBatch.Draw(background, new Vector2(0, 0), new Color(colorMax, colorMax, colorMax, TransitionAlpha));
 
             // Title
            // spriteBatch.Draw(title, new Vector2(34, 32), new Color(255, 255, 255, TransitionAlpha));

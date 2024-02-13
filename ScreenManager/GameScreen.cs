@@ -8,7 +8,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// Enum describes the screen transition state.

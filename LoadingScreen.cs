@@ -9,10 +9,7 @@ using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Storage;
-using Microsoft.Xna.Framework.GamerServices;
-
-namespace Xbox360Game1
+namespace GIJoeraffe
 {
     /// <summary>
     /// This just loads all content we're going to use on a background thread.  It doesn't
@@ -51,14 +48,16 @@ namespace Xbox360Game1
             // First thing we need to do is get a valid storage device for loading and saving
             // high scores.  Since this is a background thread, we can block on it; rendering the guide
             // for Xbox 360 will happen on the main thread.
-            try
+
+            // Guide and StorageDevice are no longer things I guess? 
+            /*try
             {
                 IAsyncResult result = Guide.BeginShowStorageDeviceSelector(null, null);
                 while (!result.IsCompleted) { }
                 StorageDevice device = Guide.EndShowStorageDeviceSelector(result);
                 ScreenManager.Game.Services.AddService(typeof(StorageDevice), device);
             }
-            catch { }
+            catch { }*/
 
             ScreenManager.Game.Content.Load<object>("alien_hit");
             ScreenManager.Game.Content.Load<object>("alien1");
