@@ -104,12 +104,12 @@ namespace GIJoeraffe
         private const int framesPerSec = 16;
         private SpriteBatch spriteBatch;
 
-        int frameWidthA = 40;
-        int frameHeightA = 80;
-        int frameHeightB = 30;
-        int frameWidthB = 106;
+        
+        const int DUCKING_FRAME_HEIGHT = 30;
+        const int DUCKING_FRAME_WIDTH = 106;
+        const int STANDING_FRAME_HEIGHT = 80;
 
-
+    
         public GameplayScreen()
         {
             random = new Random();
@@ -278,29 +278,28 @@ namespace GIJoeraffe
                 if (player.IsAlive == true)
                 {
                     int groundHeight = worldBounds.Bottom - groundTexture.Height;
-                    if (player.ducking == true)
-                        player.Height = frameHeightB;
+                    if (player.State == PlayerState.DUCKING)
+                        player.Height = DUCKING_FRAME_HEIGHT;
                     else
-                        player.Height = frameHeightA;
+                        player.Height = STANDING_FRAME_HEIGHT;
 
                     
-                    if (player.Jumping == true)
+                    if (player.State == PlayerState.JUMPING)
                     {
                         if (player.Position.Y < groundHeight - player.Height - 75)
                         {
-                            player.Jumping = false;
-                            player.Falling = true;
+                            player.State = PlayerState.FALLING;
                             player.Velocity.Y = 0.0f;
                         }
                         else
                             player.Velocity.Y = -150.0f;
 
                     }
-                    else if (player.Falling == true)
+                    else if (player.State == PlayerState.FALLING)
                     {
                         if (player.Position.Y >= groundHeight - player.Height)
                         {
-                            player.Falling = false;
+                            player.State = PlayerState.STANDING;
                             player.Velocity.Y = 0.0f;
                         }
                         else
@@ -453,20 +452,20 @@ namespace GIJoeraffe
                 // to occur at once so that touchpad devices don't get double hits.
                 if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Left) || input.CurrentGamePadStates[0].DPad.Left == ButtonState.Pressed)
                 {
-                    if (player.ducking)
+                    if (player.State == PlayerState.DUCKING)
                         player.Velocity.X = -0.3f;
                     else
                         player.Velocity.X = -1.0f;
-                    player.FacingLeft = true;
+                    player.Direction = PlayerDirection.LEFT;
                 }
                 else if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Right) || input.CurrentGamePadStates[0].DPad.Right == ButtonState.Pressed)
                 {
-                    if (player.ducking)
+                    if (player.State == PlayerState.DUCKING)
                         player.Velocity.X = 0.3f;
                     else
                         player.Velocity.X = 1.0f;
 
-                    player.FacingLeft = false;
+                    player.Direction = PlayerDirection.RIGHT;
                    
                 }
                 else
@@ -476,20 +475,19 @@ namespace GIJoeraffe
 
 
                 if ((input.CurrentKeyboardStates[0].IsKeyDown(Keys.Down) || input.CurrentGamePadStates[0].DPad.Down == ButtonState.Pressed)
-                        && !player.Jumping && !player.Falling)
+                        && player.State == PlayerState.STANDING)
                 {
                     player.LookingUp = false;
-                    player.ducking = true;
+                    player.State = PlayerState.DUCKING;
                 }
                 else if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Up) || input.CurrentGamePadStates[0].DPad.Up == ButtonState.Pressed)
                 {
                     player.LookingUp = true;
-                    player.ducking = false;
+                    player.State = PlayerState.STANDING;
                 }
                 else
                 {
-                    player.ducking = false;
-                    player.LookingUp = false;
+                    player.State = PlayerState.STANDING;
                 }
 
                 // B button, or pressing on the upper half of the pad fires the weapon.
@@ -501,16 +499,16 @@ namespace GIJoeraffe
                         Bullet bullet = CreatePlayerBullet();
                         if (player.LookingUp)
                         {
-                            if (player.FacingLeft == true)
+                            if (player.Direction == PlayerDirection.LEFT)
                                 bullet.Position = new Vector2((int)player.Position.X + 8, player.Position.Y + 17);
                             else
                                 bullet.Position = new Vector2((int)player.Position.X + 23, player.Position.Y + 17);
 
                             bullet.Velocity = new Vector2(0.0f, -256.0f);
                         }
-                        else if (player.FacingLeft)
+                        else if (player.Direction == PlayerDirection.LEFT)
                         {
-                            if (player.ducking)
+                            if (player.State == PlayerState.DUCKING)
                             {
                                 bullet.Position = new Vector2((int)player.Position.X, player.Position.Y + 25);
                             }
@@ -523,7 +521,7 @@ namespace GIJoeraffe
                         }
                         else
                         {
-                            if (player.ducking)
+                            if (player.State == PlayerState.DUCKING)
                             {
                                 bullet.Position = new Vector2((int)(player.Position.X + player.Width), player.Position.Y + 25);
                             }
@@ -545,8 +543,8 @@ namespace GIJoeraffe
                 }
 
                 if ((input.CurrentKeyboardStates[0].IsKeyDown(Keys.LeftAlt) || input.CurrentGamePadStates[0].IsButtonDown(Buttons.B))
-                        && !player.Falling && !player.ducking)
-                    player.Jumping = true;
+                        && player.State == PlayerState.STANDING)
+                    player.State = PlayerState.JUMPING;
             }
         }
 
@@ -578,8 +576,7 @@ namespace GIJoeraffe
                     }
 
                     player.IsAlive = true;
-                    player.Jumping = false;
-                    player.Falling = false;
+                    player.State = PlayerState.STANDING;
                     player.Position = new Vector2(worldBounds.Width / 2 - player.Width / 2, worldBounds.Bottom - groundTexture.Height + 2 - player.Height);
                     player.Velocity = Vector2.Zero;
                     player.Lives--;
@@ -601,7 +598,7 @@ namespace GIJoeraffe
 
                 playerBullets[i].Position += playerBullets[i].Velocity * elapsed;
 
-                if (player.FacingLeft == true)
+                if (player.Direction == PlayerDirection.LEFT)
                 {
                     playerBullets[i].Rotation += -6.0f * elapsed;
                 }
@@ -776,10 +773,8 @@ namespace GIJoeraffe
                 player.Score = 0;
                 player.Lives = 3;
                 player.RespawnTimer = 0.0f;
-                player.Jumping = false;
-                player.Falling = false;
-                player.FacingLeft = false;
-                player.LookingUp = false;
+                player.State = PlayerState.STANDING;
+                player.Direction = PlayerDirection.RIGHT;
 
                 gameOver = false;
 
@@ -929,20 +924,24 @@ namespace GIJoeraffe
         /// </summary>
         private void SpawnAlien()
         {
+            const float ALIEN_SPAWN_LEFT = -64.0f;
+            int alienSpawnRight = worldBounds.Width + 32;
+            const float ALIEN_SPAWN_FLOOR = 50.0f;
+
             Alien newAlien = CreateAlien();
 
             if (random.Next(2) == 1)
             {
-                newAlien.Position.X = -64.0f;
+                newAlien.Position.X = ALIEN_SPAWN_LEFT;
                 newAlien.Velocity.X = random.Next((int)alienSpeedMin, (int)alienSpeedMax);
             }
             else
             {
-                newAlien.Position.X = worldBounds.Width + 32;
+                newAlien.Position.X = alienSpawnRight;
                 newAlien.Velocity.X = -random.Next((int)alienSpeedMin, (int)alienSpeedMax);
             }
 
-            newAlien.Position.Y = 50.0f + 375.0f * (float)random.NextDouble();
+            newAlien.Position.Y = ALIEN_SPAWN_FLOOR + 375.0f * (float)random.NextDouble();
 
             // Aliens
             if (transitionFactor > 0.0f)
@@ -1017,66 +1016,74 @@ namespace GIJoeraffe
         /// </summary>
         void DrawPlayer()
         {
+            const int STANDING_FRAME_WIDTH = 40;
+            const int DUCKING_FRAME_X = 0;
+            const int DUCKING_FRAME_1_Y = 353;
+
+            const int WALKING_FRAME_COUNT = 4;
+            const int STANDING_FRAME_COUNT = 1;
+            const int DUCKING_FRAMES_PER_SECOND = 3;
+
             if (!gameOver && player.IsAlive)
             {
-                if (player.Velocity.X == 0 || player.Jumping)
-                    spriteTexture.frameCount = 1;
+                if (player.Velocity.X == 0 || player.State == PlayerState.JUMPING)
+                    spriteTexture.frameCount = STANDING_FRAME_COUNT;
                 else
-                    spriteTexture.frameCount = 4;
+                    spriteTexture.frameCount = WALKING_FRAME_COUNT;
 
-                if (player.FacingLeft == true)
+                if (player.Direction == PlayerDirection.LEFT)
                 {                   
                     //ScreenManager.SpriteBatch.Draw(player.Picture, player.Position, null, Color.White, 0.0f, new Vector2(0.0f, 0.0f), 1.0f, SpriteEffects.FlipHorizontally, 1.0f);
 
-                    if (player.ducking)
+                    if (player.State == PlayerState.DUCKING)
                     {
-                        spriteTexture.setRect(0, 353, frameWidthB, frameHeightB);
-                        spriteTexture.setFramesPerSecond(3);
-                        player.Height = frameHeightB;
-                        player.Width = frameWidthB;
+                        spriteTexture.setRect(DUCKING_FRAME_X, DUCKING_FRAME_1_Y, DUCKING_FRAME_WIDTH, DUCKING_FRAME_HEIGHT);
+                        spriteTexture.setFramesPerSecond(DUCKING_FRAMES_PER_SECOND);
+                        player.Height = DUCKING_FRAME_HEIGHT;
+                        player.Width = DUCKING_FRAME_WIDTH;
                         spriteTexture.DrawFrame(ScreenManager.SpriteBatch, player.Position);
                     }
                     else if (player.LookingUp)
                     {
-                        spriteTexture.setRect(160, 158, frameWidthA, frameHeightA);
+                        spriteTexture.setRect(160, 158, STANDING_FRAME_WIDTH, STANDING_FRAME_HEIGHT);
                         spriteTexture.setFramesPerSecond(16);
-                        player.Height = frameHeightA;
-                        player.Width = frameWidthA;
+                        player.Height = STANDING_FRAME_HEIGHT;
+                        player.Width = STANDING_FRAME_WIDTH;
                         spriteTexture.DrawFrame(ScreenManager.SpriteBatch, player.Position);
                     }
                     else
                     {
-                        spriteTexture.setRect(160, 0, frameWidthA, frameHeightA);
+                        spriteTexture.setRect(160, 0, STANDING_FRAME_WIDTH, STANDING_FRAME_HEIGHT);
                         spriteTexture.setFramesPerSecond(16);
-                        player.Height = frameHeightA;
-                        player.Width = frameWidthA;
+                        player.Height = STANDING_FRAME_HEIGHT;
+                        player.Width = STANDING_FRAME_WIDTH;
                         spriteTexture.DrawFrame(ScreenManager.SpriteBatch, player.Position);
                     }
                 }
                 else
                 {
-                    if (player.ducking)
+                    if (player.State == PlayerState.DUCKING)
                     {
-                        spriteTexture.setRect(0, 318, frameWidthB, frameHeightB);
+                        spriteTexture.setRect(0, 318, DUCKING_FRAME_WIDTH, DUCKING_FRAME_HEIGHT);
                         spriteTexture.setFramesPerSecond(3);
-                        player.Height = frameHeightB;
-                        player.Width = frameWidthB;
+                        player.Height = DUCKING_FRAME_HEIGHT;
+                        player.Width = DUCKING_FRAME_WIDTH;
                         spriteTexture.DrawFrame(ScreenManager.SpriteBatch, player.Position);
                     }
                     else if (player.LookingUp)
                     {
-                        spriteTexture.setRect(0, 158, frameWidthA, frameHeightA);
+                        spriteTexture.setRect(0, 158, STANDING_FRAME_WIDTH, STANDING_FRAME_HEIGHT);
                         spriteTexture.setFramesPerSecond(16);
-                        player.Height = frameHeightA;
-                        player.Width = frameWidthA;
+                        player.Height = STANDING_FRAME_HEIGHT;
+                        player.Width = STANDING_FRAME_WIDTH;
                         spriteTexture.DrawFrame(ScreenManager.SpriteBatch, player.Position);
                     }
                     else
                     {
-                        spriteTexture.setRect(0, 0, frameWidthA, frameHeightA);
+                        spriteTexture.setRect(0, 0, STANDING_FRAME_WIDTH, STANDING_FRAME_HEIGHT);
                         spriteTexture.setFramesPerSecond(16);
-                        player.Height = frameHeightA;
-                        player.Width = frameWidthA;
+                        player.Height = STANDING_FRAME_HEIGHT;
+                        player.Width = STANDING_FRAME_WIDTH;
                         spriteTexture.DrawFrame(ScreenManager.SpriteBatch, player.Position);
                     }
                 }
@@ -1105,7 +1112,7 @@ namespace GIJoeraffe
                 if (playerBullets[i].IsAlive)
                     if (player.LookingUp == true)
                         ScreenManager.SpriteBatch.Draw(bulletTexture, playerBullets[i].Position, null, Color.White, playerBullets[i].Rotation + 90, new Vector2(bulletTexture.Height / 2, bulletTexture.Width / 2), 1.0f, SpriteEffects.FlipHorizontally, 1.0f);
-                    else if (player.FacingLeft == true)
+                    else if (player.Direction == PlayerDirection.LEFT)
                     {
                         ScreenManager.SpriteBatch.Draw(bulletTexture, playerBullets[i].Position, null, Color.White, playerBullets[i].Rotation, new Vector2(bulletTexture.Height / 2, bulletTexture.Width / 2), 1.0f, SpriteEffects.FlipHorizontally, 1.0f);
                     }
@@ -1249,6 +1256,20 @@ namespace GIJoeraffe
         public bool IsAlive;
     }
 
+    
+    public enum PlayerState {
+        JUMPING,
+        FALLING,
+        DUCKING,
+        STANDING
+    }
+
+    public enum PlayerDirection {
+        LEFT = -1,
+        RIGHT = 1
+    }
+
+
     /// <summary>
     /// The player's state
     /// </summary>
@@ -1265,11 +1286,9 @@ namespace GIJoeraffe
         public Texture2D Picture;
         public int Score;
         public int Lives;
-        public bool Jumping;
-        public bool Falling;
-        public bool FacingLeft;
+        public PlayerState State;
+        public PlayerDirection Direction;
         public bool LookingUp;
-        public bool ducking;
         public bool pulledTrigger;
 
         public void jump(float bottomBound)
